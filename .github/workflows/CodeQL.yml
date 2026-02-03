@@ -1,17 +1,9 @@
 name: 🔍 CodeQL Analysis
 on:
   push:
-    branches: [ "**" ]
-    paths-ignore:
-      - '.github/workflows/**'
-      - 'sonar-project.properties'
-      - '.snyk'
+    branches: ["main"]
   pull_request:
-    branches: [ "**" ]
-    paths-ignore:
-      - '.github/workflows/**'
-      - 'sonar-project.properties'
-      - '.snyk'
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -134,22 +126,19 @@ jobs:
                     run_results = run.get('results', [])
 
                     for res in run_results:
-                        # Find the rule definition
                         rule = {}
                         if 'ruleId' in res and res['ruleId'] in rules_map:
                             rule = rules_map[res['ruleId']]
                         elif 'ruleIndex' in res and res['ruleIndex'] < len(tool_rules):
                             rule = tool_rules[res['ruleIndex']]
 
-                        # Fallback level
                         if 'level' not in res:
                             res['level'] = rule.get('defaultConfiguration', {}).get('level', 'warning')
 
-                        # CALCULATE REAL SEVERITY from security-severity (CVSS)
                         props = rule.get('properties', {})
                         sec_sev_str = props.get('security-severity', '0')
 
-                        display_sev = 'Low' # Default
+                        display_sev = 'Low' 
 
                         try:
                             score = float(sec_sev_str)
@@ -158,11 +147,9 @@ jobs:
                             elif score >= 4.0: display_sev = 'Medium'
                             else: display_sev = 'Low'
                         except:
-                            # If not a number, maybe it is a string label or we fallback to level
                             if res['level'] == 'error': display_sev = 'High'
                             else: display_sev = 'Medium'
 
-                        # Inject custom field for processing
                         res['_display_sev'] = display_sev
                         results.append(res)
 
@@ -177,7 +164,7 @@ jobs:
                     # Block on Critical or High severity regardless of 'level'
                     if sev in ['Critical', 'High']:
                         should_fail = True
-                        print(f"::error::Blocking Pipeline: Found {{sev}} vulnerability!")
+                        print(f"::error::Blocking Pipeline: Found {sev} vulnerability!")
                         break
 
                     # Also block if the tool explicitly flagged it as an error

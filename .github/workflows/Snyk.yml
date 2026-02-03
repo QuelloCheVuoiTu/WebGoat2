@@ -1,17 +1,9 @@
 name: 🐶 Snyk Security
 on:
   push:
-    branches: [ "**" ]
-    paths-ignore:
-      - '.github/workflows/**'
-      - 'sonar-project.properties'
-      - '.snyk'
+    branches: ["main"]
   pull_request:
-    branches: [ "**" ]
-    paths-ignore:
-      - '.github/workflows/**'
-      - 'sonar-project.properties'
-      - '.snyk'
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
@@ -68,7 +60,6 @@ jobs:
                    found = True
                    break
 
-           # If vulnerabilities exist and Blocking is enabled, FAIL the build
            if found and 'true' == 'true':
                print('::error::Blocking Pipeline: Snyk found security vulnerabilities!')
                sys.exit(1)
@@ -77,7 +68,6 @@ jobs:
 
         except Exception as e:
            print(e)
-           # If checking fails but blocking is on, be safe and fail
            if 'true' == 'true':
               sys.exit(1)
         "

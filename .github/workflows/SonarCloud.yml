@@ -1,17 +1,9 @@
 name: 📡 SonarCloud Analysis
 on:
   push:
-    branches: [ "**" ]
-    paths-ignore:
-      - '.github/workflows/**'
-      - 'sonar-project.properties'
-      - '.snyk'
+    branches: ["main"]
   pull_request:
-    branches: [ "**" ]
-    paths-ignore:
-      - '.github/workflows/**'
-      - 'sonar-project.properties'
-      - '.snyk'
+    branches: ["main"]
   workflow_dispatch:
 
 jobs:
